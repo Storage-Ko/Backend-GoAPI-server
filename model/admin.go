@@ -3,16 +3,15 @@ package model
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
 
 type Admin struct {
 	gorm.Model
-	uid       uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	id        string
-	name      string
-	password  string
-	isAdmin   bool `gorm:"default:true"`
-	createdAt time.Time
+	Uid       uint      `gorm:"primaryKey;autoIncrement" json:"uid"`
+	Id        string    `json:"id"`
+	Name      string    `json:"name"`
+	Password  string    `json:"password"`
+	IsAdmin   bool      `sql:"default:true" json:"isAdmin"`
+	CreatedAt time.Time `json:"createdAt"`
 }
