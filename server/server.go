@@ -12,7 +12,7 @@ func Start() {
 		Addr: "0.0.0.0:4030",
 	}
 	server := atreugo.New(config)
-	server.UseBefore(middleware.BeforeGlobal)
+	server.UseBefore(middleware.AuthMiddleware)
 
 	v1.Start_v1(server)
 
