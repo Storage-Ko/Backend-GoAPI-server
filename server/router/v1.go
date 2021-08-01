@@ -7,7 +7,7 @@ import (
 )
 
 func Start_v1(server *atreugo.Atreugo) {
-	server.UseBefore(middleware.BeforeGlobal)
 	version1 := server.NewGroupPath("/v1")
+	version1.UseBefore(middleware.BeforeGlobal)
 	version1.GET("/test", v1.TestHandle)
 }

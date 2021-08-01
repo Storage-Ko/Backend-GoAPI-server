@@ -7,16 +7,16 @@ import (
 )
 
 type Response struct {
-	statusCode int
-	message    string
+	Status  int    `json:"statusCode"`
+	Message string `json:"message"`
 }
 
 func TestHandle(ctx *atreugo.RequestCtx) error {
 	res := Response{
-		statusCode: 200,
-		message:    "Test handling v1 api group",
+		Status:  200,
+		Message: "Test handling v1 api group",
 	}
 	fmt.Println(res)
-	ctx.JSONResponse(&res)
+	ctx.JSONResponse(res, 200)
 	return nil
 }
