@@ -3,7 +3,7 @@ package model
 import (
 	"database/sql"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Admin struct {
