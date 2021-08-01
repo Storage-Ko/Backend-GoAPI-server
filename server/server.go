@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/Backend-GoAtreugo-server/server/middleware"
-	"github.com/Backend-GoAtreugo-server/server/router"
+	v1 "github.com/Backend-GoAtreugo-server/server/v1"
 	"github.com/Backend-GoAtreugo-server/utils"
 	"github.com/savsgio/atreugo/v11"
 )
@@ -14,7 +14,7 @@ func Start() {
 	server := atreugo.New(config)
 	server.UseBefore(middleware.BeforeGlobal)
 
-	router.Start_v1(server)
+	v1.Start_v1(server)
 
 	server.GET("/", func(rc *atreugo.RequestCtx) error {
 		rc.HTTPResponse("root dir api test", 200)
