@@ -31,7 +31,6 @@ func GenerateToken(username string, password string) string {
 	var jwtSignKey = []byte(jwtSecret["JWT_SECRET"])
 	expireAt := time.Now().Add(10 * time.Minute)
 
-	// Embed User information to `token`
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
 		Username: username,
 		Password: password,
@@ -40,7 +39,6 @@ func GenerateToken(username string, password string) string {
 		},
 	})
 
-	// token -> string. Only server knows the secret.
 	tokenString, err := newToken.SignedString(jwtSignKey)
 	HandleErr(err)
 	return tokenString
