@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/Backend-GoAtreugo-server/model"
@@ -8,10 +9,9 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
-func start() {
+func Start() *sql.DB {
 	var dbConfig map[string]string
 	dbConfig, err := godotenv.Read()
 	utils.HandleErr(err)
@@ -26,14 +26,13 @@ func start() {
 		dbConfig["MYSQL_DBNAME"],
 	)
 
-	db, err := gorm.Open(mysql.Open(mysqlCredentials), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-		},
-	})
-	mysqlDB, err := db.DB()
+	db, err := gorm.Open(mysql.Open(mysqlCredentials), &gorm.Config{})
 	utils.HandleErr(err)
+
+	mysql, err := db.DB()
+	utils.HandleErr(err)
+	mysql.Begin()
 	db.AutoMigrate(&model.Admin{}, &model.User{}, &model.Comment{})
 
-	defer mysqlDB.Close()
+	return mysql
 }

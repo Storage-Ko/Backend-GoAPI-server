@@ -12,3 +12,10 @@ type User struct {
 	Grade  int    `json:"grade"`
 	Status int    `json:"status"`
 }
+
+func FindById(id string) User {
+	//db :=
+	user := User{}
+	//db.Where(&User{Id: id}).First(&user)
+	return user
+}
