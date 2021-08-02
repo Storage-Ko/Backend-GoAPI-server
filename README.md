@@ -1,4 +1,4 @@
-# Go Atreugo Server
+# Go API Server
 
 ## Build API server with Golang 
 
@@ -6,7 +6,7 @@
 
 ### Use Skill
 ```
-- Atreugo
+- Gorilla MUX
 - Fasthttp
 - Gorm 
 - JWT
