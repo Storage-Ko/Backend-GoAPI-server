@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/Backend-GoAtreugo-server/utils"
 	"github.com/savsgio/atreugo/v11"
@@ -33,9 +34,19 @@ func AfterView(ctx *atreugo.RequestCtx) error {
 	return ctx.Next()
 }
 
+func JsonContentTypeMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+}
+
 func AuthMiddleware(ctx *atreugo.RequestCtx) error {
 	// Avoid middleware when you are going to login view
 	if string(ctx.Path()) == "/v1/login" {
+		return ctx.Next()
+	}
+	if string(ctx.Path()) == "/v1/signup" {
 		return ctx.Next()
 	}
 

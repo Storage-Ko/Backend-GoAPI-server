@@ -1,25 +1,22 @@
 package server
 
 import (
+	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/Backend-GoAtreugo-server/server/middleware"
 	v1 "github.com/Backend-GoAtreugo-server/server/v1"
-	"github.com/Backend-GoAtreugo-server/utils"
-	"github.com/savsgio/atreugo/v11"
+	"github.com/gorilla/mux"
 )
 
-func Start() {
-	config := atreugo.Config{
-		Addr: "0.0.0.0:4030",
-	}
-	server := atreugo.New(config)
-	server.UseBefore(middleware.AuthMiddleware)
+var port string
 
-	v1.Start_v1(server)
-
-	server.GET("/", func(rc *atreugo.RequestCtx) error {
-		rc.HTTPResponse("root dir api test", 200)
-		return nil
-	})
-	err := server.ListenAndServe()
-	utils.HandleErr(err)
+func Start(aPort int) {
+	port = fmt.Sprintf(":%d", aPort)
+	router := mux.NewRouter()
+	router.Use(middleware.JsonContentTypeMiddleware)
+	router.HandleFunc("/v1", v1.Documentation).Methods("GET")
+	fmt.Printf("Listening on http://localhost%s\n", port)
+	log.Fatal(http.ListenAndServe(port, router))
 }
