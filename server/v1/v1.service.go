@@ -2,12 +2,7 @@ package v1
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-
-	"github.com/Backend-GoAtreugo-server/model"
-	"github.com/Backend-GoAtreugo-server/utils"
-	"github.com/savsgio/atreugo/v11"
 )
 
 type url string
@@ -45,6 +40,7 @@ func Documentation(rw http.ResponseWriter, r *http.Request) {
 	*/
 }
 
+/*
 func loginHandle(ctx *atreugo.RequestCtx) error {
 	reqByte := ctx.Request.Body()
 	reqObj := utils.LoginReq{}
@@ -79,3 +75,4 @@ func signupHandle(ctx *atreugo.RequestCtx) error {
 	ctx.Response.SetStatusCode(201)
 	return nil
 }
+*/

@@ -1,38 +1,8 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
-
-	"github.com/Backend-GoAtreugo-server/utils"
-	"github.com/savsgio/atreugo/v11"
-	"github.com/savsgio/go-logger/v2"
-	"github.com/valyala/fasthttp"
 )
-
-func BeforeGlobal(ctx *atreugo.RequestCtx) error {
-	logger.Info("Middleware executed BEFORE GLOBAL")
-
-	return ctx.Next()
-}
-
-func AfterGlobal(ctx *atreugo.RequestCtx) error {
-	logger.Info("Middleware executed AFTER GLOBAL")
-
-	return ctx.Next()
-}
-
-func BeforeView(ctx *atreugo.RequestCtx) error {
-	logger.Info("Middleware executed BEFORE VIEW")
-
-	return ctx.Next()
-}
-
-func AfterView(ctx *atreugo.RequestCtx) error {
-	logger.Info("Middleware executed AFTER VIEW")
-
-	return ctx.Next()
-}
 
 func JsonContentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -41,6 +11,7 @@ func JsonContentTypeMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+/*
 func AuthMiddleware(ctx *atreugo.RequestCtx) error {
 	// Avoid middleware when you are going to login view
 	if string(ctx.Path()) == "/v1/login" {
@@ -66,3 +37,4 @@ func AuthMiddleware(ctx *atreugo.RequestCtx) error {
 
 	return ctx.Next()
 }
+*/

@@ -1,7 +1,12 @@
 package main
 
-import "github.com/Backend-GoAtreugo-server/server"
+import (
+	"github.com/Backend-GoAtreugo-server/db"
+	"github.com/Backend-GoAtreugo-server/server"
+)
 
 func main() {
-	server.Start()
+	db := db.Start()
+	server.Start(4030)
+	defer db.Close()
 }
