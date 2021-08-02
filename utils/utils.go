@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"github.com/savsgio/go-logger/v2"
 )
 
 func HandleErr(err error) {
 	if err != nil {
-		log.Fatal("Error : " + err.Error())
+		logger.Error(err)
 		log.Panic(err)
 	}
 }
@@ -22,5 +24,7 @@ func Hash(payload interface{}) string {
 
 func ByteToObj(payload []byte, object interface{}) {
 	err := json.Unmarshal(payload, &object)
-	HandleErr(err)
+	if err != nil {
+		logger.Error(err)
+	}
 }
