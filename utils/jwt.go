@@ -29,32 +29,24 @@ func GetTokenString(ctx *atreugo.RequestCtx) ([]byte, error) {
 
 	if len(jwtCookie) == 0 {
 		ForbiddenException(ctx)
-		return nil, errors.New("Forbidden Error")
+		return nil, errors.New("Token cannot found")
 	}
 	return jwtCookie, nil
 }
 
-func GenerateToken(username []byte, password []byte) (string, time.Time) {
+func GenerateToken(username []byte, password []byte) string {
 	logger.Debugf("Create new token for user %s", username)
 
-	expireAt := time.Now().Add(1 * time.Minute)
-
-	// Embed User information to `token`
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
 		Username: username,
 		Password: password,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expireAt.Unix(),
+			ExpiresAt: time.Now().Add(1 * time.Minute).Unix(),
 		},
 	})
 
-	// token -> string. Only server knows the secret.
-	tokenString, err := newToken.SignedString(jwtSignKey)
-	if err != nil {
-		logger.Error(err)
-	}
-
-	return tokenString, expireAt
+	tokenString, _ := newToken.SignedString(jwtSignKey)
+	return tokenString
 }
 
 func ValidateToken(requestToken string) (*jwt.Token, *userCredential, error) {
