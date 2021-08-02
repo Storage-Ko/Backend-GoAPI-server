@@ -1,6 +1,8 @@
 package utils
 
-import "github.com/savsgio/atreugo/v11"
+import (
+	"github.com/savsgio/atreugo/v11"
+)
 
 func BadRequestException(ctx *atreugo.RequestCtx) {
 	res := ErrorRes{
