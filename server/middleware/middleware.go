@@ -2,8 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/Backend-GoAtreugo-server/utils"
 	"github.com/savsgio/atreugo/v11"
@@ -41,22 +39,13 @@ func AuthMiddleware(ctx *atreugo.RequestCtx) error {
 		return ctx.Next()
 	}
 
-	buffer := ctx.Request.Header.String()
-	slice := strings.Split(buffer, "Authorization: ")
-	jwt := strings.Split(slice[1], "\nAccept: */*")
-
-	jwtCookieStr := jwt[0]
-	jwtCookie1 := []byte(jwtCookieStr)
-	jwtCookie1 = jwtCookie1[:len(jwtCookie1)-1]
-	fmt.Printf("AuthorizationA: %v\n", jwtCookie1)
-
-	if len(jwtCookie1) == 0 {
-		return ctx.ErrorResponse(errors.New("login required"), fasthttp.StatusForbidden)
+	jwtCookie, err := utils.GetTokenString(ctx)
+	if err != nil {
+		return err
 	}
 
-	token, _, err := utils.ValidateToken(string(jwtCookie1))
+	token, _, err := utils.ValidateToken(string(jwtCookie))
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
