@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"net/http"
+
+	"github.com/Backend-GoAtreugo-server/utils"
 )
 
 func JsonContentTypeMiddleware(next http.Handler) http.Handler {
@@ -11,30 +13,26 @@ func JsonContentTypeMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-/*
-func AuthMiddleware(ctx *atreugo.RequestCtx) error {
+func AuthMiddleware(next http.Handler) http.Handler {
 	// Avoid middleware when you are going to login view
-	if string(ctx.Path()) == "/v1/login" {
-		return ctx.Next()
-	}
-	if string(ctx.Path()) == "/v1/signup" {
-		return ctx.Next()
-	}
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		if string(r.URL.Path) == "/v1/login" {
+			next.ServeHTTP(rw, r)
+		}
+		if string(r.URL.Path) == "/v1/signup" {
+			next.ServeHTTP(rw, r)
+		}
 
-	jwtCookie, err := utils.GetTokenString(ctx)
-	if err != nil {
-		return err
-	}
+		jwtCookie, err := utils.GetTokenString(rw, r)
+		utils.HandleErr(err)
 
-	token, _, err := utils.ValidateToken(string(jwtCookie))
-	if err != nil {
-		return err
-	}
+		token, _, err := utils.ValidateToken(string(jwtCookie))
+		utils.HandleErr(err)
 
-	if !token.Valid {
-		return ctx.ErrorResponse(errors.New("your session is expired, login again please"), fasthttp.StatusForbidden)
-	}
-
-	return ctx.Next()
+		if !token.Valid {
+			utils.ForbiddenException(rw)
+			return
+		}
+		next.ServeHTTP(rw, r)
+	})
 }
-*/
