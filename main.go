@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Backend-GoAtreugo-server/db"
-	"github.com/Backend-GoAtreugo-server/server"
+	"github.com/Backend-GoAPI-server/db"
+	"github.com/Backend-GoAPI-server/server"
 )
 
 func main() {

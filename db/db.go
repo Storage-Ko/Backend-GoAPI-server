@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Backend-GoAtreugo-server/model"
-	"github.com/Backend-GoAtreugo-server/utils"
+	"github.com/Backend-GoAPI-server/model"
+	"github.com/Backend-GoAPI-server/utils"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
