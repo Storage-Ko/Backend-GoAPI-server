@@ -1,4 +1,4 @@
-module github.com/Backend-GoAtreugo-server
+module github.com/Backend-GoAPI-server
 
 go 1.16
 
