@@ -5,14 +5,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/savsgio/go-logger/v2"
 )
 
-func HandleErr(err error) {
+func HandleCredential(err error) {
 	if err != nil {
 		logger.Error(err)
 		log.Panic(err)
+	}
+}
+
+func HandleErr(err error) {
+	if err != nil {
+		logger.Error(err)
 	}
 }
 
@@ -27,4 +34,11 @@ func ByteToObj(payload []byte, object interface{}) {
 	if err != nil {
 		logger.Error(err)
 	}
+}
+
+func MarshalAndRW(status int, res interface{}, rw http.ResponseWriter) {
+	rw.WriteHeader(status)
+	resByte, err := json.MarshalIndent(res, "", "	")
+	HandleErr(err)
+	rw.Write(resByte)
 }
