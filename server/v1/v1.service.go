@@ -2,7 +2,13 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/Backend-GoAtreugo-server/utils"
+	"github.com/savsgio/go-logger/v2"
 )
 
 type url string
@@ -40,39 +46,45 @@ func Documentation(rw http.ResponseWriter, r *http.Request) {
 	*/
 }
 
-/*
-func loginHandle(ctx *atreugo.RequestCtx) error {
-	reqByte := ctx.Request.Body()
-	reqObj := utils.LoginReq{}
+func LoginHandle(rw http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	utils.HandleErr(err)
 
-	utils.ByteToObj(reqByte, &reqObj)
+	data := utils.LoginReq{}
+	json.Unmarshal(body, &data)
 
-	if reqObj.Id == "" || reqObj.Password == "" {
-		return utils.BadRequestException(ctx)
+	if data.Id == "" || data.Password == "" {
+		utils.BadRequestException(rw)
+		logger.Error(errors.New("Bad Request : " + data.Id))
+		return
 	}
 
-	token := utils.GenerateToken([]byte(reqObj.Id), []byte(utils.Hash(reqObj.Password)))
+	hashedPw := utils.Hash(data.Password)
+	fmt.Println(hashedPw)
+
+	token := utils.GenerateToken([]byte(data.Id))
 
 	resObj := utils.LoginRes{
 		Status:      200,
 		Accesstoken: token,
 	}
+	utils.MarshalAndRW(200, resObj, rw)
+	return
 
-	return ctx.JSONResponse(resObj, 200)
 }
 
-func signupHandle(ctx *atreugo.RequestCtx) error {
-	reqByte := ctx.Request.Body()
-	reqObj := utils.SignupReq{}
+func SignupHandle(rw http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	utils.HandleErr(err)
 
-	utils.ByteToObj(reqByte, &reqObj)
+	data := utils.SignupReq{}
+	json.Unmarshal(body, &data)
 
-	if reqObj.Id == "" || reqObj.Name == "" || reqObj.Password == "" {
-		return utils.BadRequestException(ctx)
+	if data.Id == "" || data.Name == "" || data.Password == "" {
+		utils.BadRequestException(rw)
+		return
 	}
-	temp := model.FindById(reqObj.Id)
-	fmt.Println(temp)
-	ctx.Response.SetStatusCode(201)
-	return nil
+
+	rw.WriteHeader(201)
+
 }
-*/
