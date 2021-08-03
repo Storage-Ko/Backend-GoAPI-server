@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Backend-GoAtreugo-server/server/middleware"
-	v1 "github.com/Backend-GoAtreugo-server/server/v1"
+	"github.com/Backend-GoAPI-server/server/middleware"
+	v1 "github.com/Backend-GoAPI-server/server/v1"
 	"github.com/gorilla/mux"
 	"github.com/savsgio/go-logger/v2"
 )

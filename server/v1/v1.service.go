@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Backend-GoAtreugo-server/utils"
+	"github.com/Backend-GoAPI-server/utils"
 	"github.com/savsgio/go-logger/v2"
 )
 
@@ -54,8 +54,8 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &data)
 
 	if data.Id == "" || data.Password == "" {
-		utils.BadRequestException(rw)
 		logger.Error(errors.New("Bad Request : " + data.Id))
+		utils.BadRequestException(rw)
 		return
 	}
 
@@ -68,9 +68,8 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 		Status:      200,
 		Accesstoken: token,
 	}
-	utils.MarshalAndRW(200, resObj, rw)
-	return
 
+	utils.MarshalAndRW(200, resObj, rw)
 }
 
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
@@ -86,5 +85,4 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.WriteHeader(201)
-
 }
