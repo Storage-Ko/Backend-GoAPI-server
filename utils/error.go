@@ -1,41 +1,37 @@
 package utils
 
 import (
-	"github.com/savsgio/atreugo/v11"
+	"net/http"
 )
 
-func BadRequestException(ctx *atreugo.RequestCtx) error {
+func BadRequestException(rw http.ResponseWriter) {
 	res := ErrorRes{
 		Status:  400,
-		Message: "Bad Request",
+		Message: "BadRequest",
 	}
-	ctx.JSONResponse(res, res.Status)
-	return nil
+	MarshalAndRW(400, res, rw)
 }
 
-func UnauthorizedException(ctx *atreugo.RequestCtx) error {
+func UnauthorizedException(rw http.ResponseWriter) {
 	res := ErrorRes{
 		Status:  401,
 		Message: "Unauthorized",
 	}
-	ctx.JSONResponse(res, res.Status)
-	return nil
+	MarshalAndRW(401, res, rw)
 }
 
-func ForbiddenException(ctx *atreugo.RequestCtx) error {
+func ForbiddenException(rw http.ResponseWriter) {
 	res := ErrorRes{
 		Status:  403,
 		Message: "Forbidden",
 	}
-	ctx.JSONResponse(res, res.Status)
-	return nil
+	MarshalAndRW(403, res, rw)
 }
 
-func NotFoundException(ctx *atreugo.RequestCtx) error {
+func NotFoundException(rw http.ResponseWriter) {
 	res := ErrorRes{
 		Status:  404,
 		Message: "Not Found",
 	}
-	ctx.JSONResponse(res, res.Status)
-	return nil
+	MarshalAndRW(404, res, rw)
 }
