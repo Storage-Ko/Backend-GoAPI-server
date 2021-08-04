@@ -12,7 +12,4 @@ func Migrate(db *gorm.DB) {
 	if !db.HasTable(&model.User{}) {
 		db.CreateTable(&model.User{})
 	}
-	if !db.HasTable(&model.Admin{}) {
-		db.CreateTable(&model.Admin{})
-	}
 }
