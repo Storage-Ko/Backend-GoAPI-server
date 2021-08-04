@@ -1,20 +1,22 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 
-	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/utils"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
-func Start() *sql.DB {
+func Start() (*gorm.DB, error) {
 	var dbConfig map[string]string
 	dbConfig, err := godotenv.Read()
-	utils.HandleErr(err)
+	if err != nil {
+		utils.HandleErr(err)
+		return nil, err
+	}
 
 	mysqlCredentials := fmt.Sprintf(
 		"%s:%s@%s(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -26,13 +28,6 @@ func Start() *sql.DB {
 		dbConfig["MYSQL_DBNAME"],
 	)
 
-	db, err := gorm.Open(mysql.Open(mysqlCredentials), &gorm.Config{})
-	utils.HandleErr(err)
-
-	mysql, err := db.DB()
-	utils.HandleErr(err)
-	mysql.Begin()
-	db.AutoMigrate(&model.Admin{}, &model.User{}, &model.Comment{})
-
-	return mysql
+	db, err := gorm.Open("mysql", mysqlCredentials)
+	return db, err
 }
