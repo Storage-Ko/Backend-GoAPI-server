@@ -3,10 +3,11 @@ package v1
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Backend-GoAPI-server/db"
+	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/utils"
 	"github.com/savsgio/go-logger/v2"
 )
@@ -20,6 +21,7 @@ type urlDescription struct {
 	Payload     string `json:"payload,omitempty"`
 }
 
+// Document API
 func Documentation(rw http.ResponseWriter, r *http.Request) {
 	data := []urlDescription{
 		{
@@ -46,39 +48,68 @@ func Documentation(rw http.ResponseWriter, r *http.Request) {
 	*/
 }
 
+// Login API
 func LoginHandle(rw http.ResponseWriter, r *http.Request) {
+	// Get data from request body
 	body, err := ioutil.ReadAll(r.Body)
 	utils.HandleErr(err)
 
 	data := utils.LoginReq{}
 	json.Unmarshal(body, &data)
 
+	// Body data validation
 	if data.Id == "" || data.Password == "" {
 		logger.Error(errors.New("Bad Request : " + data.Id))
 		utils.BadRequestException(rw)
 		return
 	}
 
+	// Get gorm.DB
+	db := db.Start()
+
+	// Find user by id from request body data
+	user := model.User{}
+	db.Where("Id = ?", data.Id).First(&user)
+	if user.Id == "" {
+		logger.Error(errors.New("Not found id : " + data.Id))
+		utils.NotFoundException(rw)
+		return
+	}
+
+	// Hashing password
 	hashedPw := utils.Hash(data.Password)
-	fmt.Println(hashedPw)
 
-	token := utils.GenerateToken([]byte(data.Id))
+	// Password validataion
+	if user.Password != hashedPw {
+		logger.Error(errors.New("Wrong PW id : " + data.Id))
+		utils.ForbiddenException(rw)
+		return
+	}
 
+	// Generate Access, Refresh Token
+	access := utils.AccessToken(data.Id)   // 10 Mins
+	refresh := utils.RefreshToken(data.Id) // 14 Days
+
+	// Response Token
 	res := utils.LoginRes{
-		Status:      200,
-		Accesstoken: token,
+		Status:       200,
+		Accesstoken:  access,
+		Refreshtoken: refresh,
 	}
 
 	utils.MarshalAndRW(200, res, rw)
 }
 
+// Signup API
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
+	// Get data from request body
 	body, err := ioutil.ReadAll(r.Body)
 	utils.HandleErr(err)
 
 	data := utils.SignupReq{}
 	json.Unmarshal(body, &data)
 
+	// Body data validation
 	if data.Id == "" || data.Name == "" || data.Password == "" {
 		utils.BadRequestException(rw)
 		return
