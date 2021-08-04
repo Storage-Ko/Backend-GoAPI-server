@@ -42,17 +42,17 @@ func AccessToken(username string) string {
 }
 
 func RefreshToken(username string) string {
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
 		Username: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(336 * time.Hour).Unix(),
 		},
 	})
 
-	access, err := accessToken.SignedString(jwtSignKey)
+	refresh, err := refreshToken.SignedString(jwtSignKey)
 	HandleErr(err)
 
-	return access
+	return refresh
 }
 
 func ValidateToken(requestToken string) (*jwt.Token, *userCredential, error) {
