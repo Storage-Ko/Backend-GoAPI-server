@@ -13,7 +13,6 @@ var jwtSignKey = []byte("TestForFasthttpWithJWT")
 
 type userCredential struct {
 	Username []byte `json:"username"`
-	Password []byte `json:"password"`
 	jwt.StandardClaims
 }
 
@@ -38,7 +37,8 @@ func GenerateToken(username []byte) string {
 		},
 	})
 
-	tokenString, _ := newToken.SignedString(jwtSignKey)
+	tokenString, err := newToken.SignedString(jwtSignKey)
+	HandleErr(err)
 	return tokenString
 }
 
