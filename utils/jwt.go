@@ -12,7 +12,7 @@ import (
 var jwtSignKey = []byte("TestForFasthttpWithJWT")
 
 type userCredential struct {
-	Username []byte `json:"username"`
+	Username string `json:"username"`
 	jwt.StandardClaims
 }
 
@@ -27,19 +27,32 @@ func GetTokenString(rw http.ResponseWriter, r *http.Request) ([]byte, error) {
 	return []byte(jwt), nil
 }
 
-func GenerateToken(username []byte) string {
-	logger.Debugf("Create new token for user %s", username)
-
-	newToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
+func AccessToken(username string) string {
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
 		Username: username,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(1 * time.Minute).Unix(),
+			ExpiresAt: time.Now().Add(10 * time.Minute).Unix(),
 		},
 	})
 
-	tokenString, err := newToken.SignedString(jwtSignKey)
+	access, err := accessToken.SignedString(jwtSignKey)
 	HandleErr(err)
-	return tokenString
+
+	return access
+}
+
+func RefreshToken(username string) string {
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS512, &userCredential{
+		Username: username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(336 * time.Hour).Unix(),
+		},
+	})
+
+	access, err := accessToken.SignedString(jwtSignKey)
+	HandleErr(err)
+
+	return access
 }
 
 func ValidateToken(requestToken string) (*jwt.Token, *userCredential, error) {

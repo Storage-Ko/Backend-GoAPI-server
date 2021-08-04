@@ -6,6 +6,7 @@ type ErrorRes struct {
 }
 
 type LoginRes struct {
-	Status      int    `json:"statusCode"`
-	Accesstoken string `json:"accessToken"`
+	Status       int    `json:"statusCode"`
+	Accesstoken  string `json:"accessToken"`
+	Refreshtoken string `json:"refreshToken"`
 }
