@@ -38,11 +38,7 @@ func ByteToObj(payload []byte, object interface{}) {
 
 func MarshalAndRW(status int, res interface{}, rw http.ResponseWriter) {
 	rw.WriteHeader(status)
-	logger.Info("1")
 	resByte, err := json.MarshalIndent(res, "", "	")
-	logger.Info("2")
 	HandleErr(err)
-	logger.Info("3")
 	rw.Write(resByte)
-	logger.Info("4")
 }

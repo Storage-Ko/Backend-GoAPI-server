@@ -2,6 +2,8 @@ package utils
 
 import (
 	"net/http"
+
+	"github.com/savsgio/go-logger/v2"
 )
 
 func BadRequestException(rw http.ResponseWriter) {
@@ -25,6 +27,7 @@ func ForbiddenException(rw http.ResponseWriter) {
 		Status:  403,
 		Message: "Forbidden",
 	}
+	logger.Info(res.Message)
 	MarshalAndRW(403, res, rw)
 }
 
