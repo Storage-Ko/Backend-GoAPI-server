@@ -15,13 +15,15 @@ var port string
 
 func Start(aPort int) {
 	port = fmt.Sprintf(":%d", aPort)
+
 	router := mux.NewRouter()
 
-	router.Use(middleware.JsonContentTypeMiddleware)
-	router.Use(middleware.AuthMiddleware)
-	router.HandleFunc("/v1/document", v1.Documentation)
-	router.HandleFunc("/v1/login", v1.LoginHandle)
-	router.HandleFunc("/v1/signup", v1.SignupHandle)
+	v1Router := router.PathPrefix("/v1").Subrouter()
+	v1Router.Use(middleware.AuthMiddleware)
+
+	v1Router.HandleFunc("/document", v1.Documentation)
+	v1Router.HandleFunc("/login", v1.LoginHandle)
+	v1Router.HandleFunc("/signup", v1.SignupHandle)
 
 	logger.Infof("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))

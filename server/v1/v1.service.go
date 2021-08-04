@@ -64,12 +64,12 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 
 	token := utils.GenerateToken([]byte(data.Id))
 
-	resObj := utils.LoginRes{
+	res := utils.LoginRes{
 		Status:      200,
 		Accesstoken: token,
 	}
 
-	utils.MarshalAndRW(200, resObj, rw)
+	utils.MarshalAndRW(200, res, rw)
 }
 
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
