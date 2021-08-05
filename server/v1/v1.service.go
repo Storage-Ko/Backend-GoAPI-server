@@ -5,9 +5,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/Backend-GoAPI-server/db"
-	"github.com/Backend-GoAPI-server/model"
+	"github.com/Backend-GoAPI-server/model/method"
 	"github.com/Backend-GoAPI-server/utils"
 	"github.com/savsgio/go-logger/v2"
 )
@@ -65,13 +66,15 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get gorm.DB
-	db := db.Start()
+	DB, err := db.Start()
+	defer DB.Close()
+	utils.HandlePanic(err)
 
 	// Find user by id from request body data
-	user := model.User{}
-	db.Where("Id = ?", data.Id).First(&user)
+	user := method.GetUserWithId(DB, data.Id)
+
 	if user.Id == "" {
-		logger.Error(errors.New("Not found id : " + data.Id))
+		logger.Error(errors.New("Not found account, id : " + data.Id))
 		utils.NotFoundException(rw)
 		return
 	}
@@ -102,18 +105,35 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 
 // Signup API
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
+	logger.Info(time.Now())
 	// Get data from request body
-	body, err := ioutil.ReadAll(r.Body)
-	utils.HandleErr(err)
-
-	data := utils.SignupReq{}
-	json.Unmarshal(body, &data)
+	data := new(utils.SignupReq)
 
 	// Body data validation
-	if data.Id == "" || data.Name == "" || data.Password == "" {
+	err := json.NewDecoder(r.Body).Decode(data)
+
+	if err != nil {
+		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
 
+	// Get gorm.DB
+	DB, err := db.Start()
+	defer DB.Close()
+	utils.HandlePanic(err)
+
+	user := method.GetUserWithId(DB, data.Id)
+	if user.Id == data.Id {
+		utils.BadRequestException(rw)
+		return
+	}
+
+	data.Password = utils.Hash(data.Password)
+	if data.Provider == "" {
+		data.Provider = "default"
+	}
+
+	method.CreateUser(DB, data)
 	rw.WriteHeader(201)
 }
