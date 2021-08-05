@@ -123,12 +123,14 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	defer DB.Close()
 	utils.HandlePanic(err)
 
+	// Find user by user ID
 	user := method.GetUserWithId(DB, data.Id)
 	if user.Id == data.Id {
 		utils.BadRequestException(rw)
 		return
 	}
 
+	// Hash & save password
 	data.Password = utils.Hash(data.Password)
 	if data.Provider == "" {
 		data.Provider = "default"

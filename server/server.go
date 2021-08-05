@@ -31,6 +31,10 @@ func Start(aPort int) {
 
 	// Main Router generate
 	router := mux.NewRouter()
+	router.Use(middleware.JSONResponseContentType)
+
+	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
+	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
 
 	// v1 SubRouter generate
 	v1Router := router.PathPrefix("/v1").Subrouter()
@@ -38,8 +42,6 @@ func Start(aPort int) {
 
 	// v1 Routes define
 	v1Router.HandleFunc("/document", v1.Documentation).Methods("GET")
-	v1Router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
-	v1Router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
 
 	// Server Listen
 	logger.Infof("Listening on http://localhost%s\n", port)

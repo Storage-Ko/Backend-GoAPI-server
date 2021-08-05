@@ -7,22 +7,18 @@ import (
 	"github.com/savsgio/go-logger/v2"
 )
 
-// Auth Middleware
-func AuthMiddleware(next http.Handler) http.Handler {
+// Exception Path of validation
+func JSONResponseContentType(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		// Response content type setting
 		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+}
 
-		// Exception Path of validation
-		if r.URL.Path == "/v1/login" {
-			next.ServeHTTP(rw, r)
-			return
-		}
-		if r.URL.Path == "/v1/signup" {
-			next.ServeHTTP(rw, r)
-			return
-		}
-
+// Auth Middleware
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		// Get accessToken from request header
 		jwtCookie, err := utils.GetTokenString(rw, r)
 		utils.HandleErr(err)
