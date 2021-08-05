@@ -13,10 +13,7 @@ import (
 func Start() (*gorm.DB, error) {
 	var dbConfig map[string]string
 	dbConfig, err := godotenv.Read()
-	if err != nil {
-		utils.HandleErr(err)
-		return nil, err
-	}
+	utils.HandleErr(err)
 
 	mysqlCredentials := fmt.Sprintf(
 		"%s:%s@%s(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",

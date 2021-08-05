@@ -9,7 +9,7 @@ import (
 )
 
 // test jwtSignKey
-var jwtSignKey = []byte("TestForFasthttpWithJWT")
+var testSignKey = []byte("TestForFasthttpWithJWT")
 
 // Credential type
 type userCredential struct {
@@ -42,6 +42,9 @@ func AccessToken(username string) string {
 		},
 	})
 
+	// jwt Key
+	jwtSignKey := []byte(GetSecretKey())
+
 	// Sign token
 	access, err := accessToken.SignedString(jwtSignKey)
 	HandleErr(err)
@@ -59,6 +62,9 @@ func RefreshToken(username string) string {
 		},
 	})
 
+	// jwt Key
+	jwtSignKey := []byte(GetSecretKey())
+
 	// Sign token
 	refresh, err := refreshToken.SignedString(jwtSignKey)
 	HandleErr(err)
@@ -70,6 +76,9 @@ func RefreshToken(username string) string {
 func ValidateToken(requestToken string) (*jwt.Token, *userCredential, error) {
 	// Generate Credential object
 	user := &userCredential{}
+
+	// jwt Key
+	jwtSignKey := []byte(GetSecretKey())
 
 	// Parse token and validate
 	token, err := jwt.ParseWithClaims(requestToken, user, func(token *jwt.Token) (interface{}, error) {

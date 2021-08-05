@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
 	"github.com/savsgio/go-logger/v2"
 )
 
@@ -39,6 +40,16 @@ func ByteToObj(payload []byte, object interface{}) {
 	if err != nil {
 		logger.Error(err)
 	}
+}
+
+func GetSecretKey() string {
+	// jwt Key
+	var jwtConfig map[string]string
+	jwtConfig, err := godotenv.Read()
+	HandleErr(err)
+
+	var jwtSignKey = jwtConfig["JWT_SECRET"]
+	return jwtSignKey
 }
 
 // Translate objest to byte & response payload with []byte type
