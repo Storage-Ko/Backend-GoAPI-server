@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Backend-GoAPI-server/db"
+	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/model/method"
 	"github.com/Backend-GoAPI-server/utils"
 	"github.com/gorilla/mux"
@@ -85,6 +86,9 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 
 	// Password validataion
 	if user.Password != hashedPw {
+		logger.Info(user.Password)
+		logger.Info(data.Password)
+		logger.Info(hashedPw)
 		logger.Error(errors.New("Wrong PW id : " + data.Id))
 		utils.ForbiddenException(rw)
 		return
@@ -160,4 +164,27 @@ func DropoutHandle(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.NotFoundException(rw)
+}
+
+// Update User API
+func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
+	// Get data from request body
+	data := new(model.User)
+
+	// Body data validation
+	err := json.NewDecoder(r.Body).Decode(data)
+
+	if err != nil {
+		utils.HandleErr(err)
+		utils.BadRequestException(rw)
+		return
+	}
+
+	// Get gorm.DB
+	DB, err := db.Start()
+	defer DB.Close()
+	utils.HandlePanic(err)
+
+	method.UpdateUser(DB, *data)
+
 }

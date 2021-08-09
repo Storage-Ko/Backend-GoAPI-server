@@ -35,6 +35,7 @@ func Start(aPort int) {
 
 	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
 	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
+	router.HandleFunc("/update", v1.UpdateUserHandle).Methods("PUT")
 
 	// v1 SubRouter generate
 	v1Router := router.PathPrefix("/v1").Subrouter()
