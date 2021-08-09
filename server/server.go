@@ -42,6 +42,7 @@ func Start(aPort int) {
 
 	// v1 Routes define
 	v1Router.HandleFunc("/document", v1.Documentation).Methods("GET")
+	v1Router.HandleFunc("/dropout/{id}", v1.DropoutHandle).Methods("GET")
 
 	// Server Listen
 	logger.Infof("Listening on http://localhost%s\n", port)

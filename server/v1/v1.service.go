@@ -10,6 +10,7 @@ import (
 	"github.com/Backend-GoAPI-server/db"
 	"github.com/Backend-GoAPI-server/model/method"
 	"github.com/Backend-GoAPI-server/utils"
+	"github.com/gorilla/mux"
 	"github.com/savsgio/go-logger/v2"
 )
 
@@ -138,4 +139,25 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 
 	method.CreateUser(DB, data)
 	rw.WriteHeader(201)
+}
+
+// Drop out API
+func DropoutHandle(rw http.ResponseWriter, r *http.Request) {
+
+	// Get gorm.DB
+	DB, err := db.Start()
+	defer DB.Close()
+	utils.HandlePanic(err)
+
+	val := mux.Vars(r)
+
+	// Find user by id from request body data
+	user := method.GetUserWithId(DB, val["id"])
+	if user.Id != "" {
+		method.DeleteUserWithId(DB, user.Id)
+		rw.WriteHeader(200)
+		return
+	}
+
+	utils.NotFoundException(rw)
 }

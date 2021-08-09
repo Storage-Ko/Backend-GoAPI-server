@@ -30,3 +30,7 @@ func GetUserWithId(d *gorm.DB, UserId string) model.User {
 	d.Where("id = ?", UserId).Find(&user)
 	return user
 }
+
+func DeleteUserWithId(d *gorm.DB, UserId string) {
+	d.Delete(model.User{}, "id = ?", UserId)
+}
