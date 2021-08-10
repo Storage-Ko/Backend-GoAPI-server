@@ -10,6 +10,6 @@ func Migrate(db *gorm.DB) {
 
 	// Create table when table is not exist
 	if !db.HasTable(&model.User{}) {
-		db.CreateTable(&model.User{})
+		db.AutoMigrate(&model.User{})
 	}
 }

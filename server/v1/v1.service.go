@@ -118,7 +118,7 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 
 	// Find user by user ID
 	_, err = method.GetUserWithId(DB, data.Id)
-	if err != nil {
+	if err == nil {
 		utils.BadRequestException(rw)
 		return
 	}

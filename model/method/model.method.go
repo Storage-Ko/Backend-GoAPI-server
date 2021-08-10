@@ -11,16 +11,16 @@ import (
 
 func CreateUser(d *gorm.DB, user utils.SignupReq) error {
 	data := model.User{
-		Uid:      uuid.NewV4().String(),
-		Id:       user.Id,
-		Name:     user.Name,
-		Nickname: user.Nickname,
-		Password: user.Password,
-		Provider: user.Provider,
-		Sex:      user.Sex,
-		Birth:    user.Birth,
-		Phone:    user.Phone,
-		Date:     time.Now(),
+		Uid:       uuid.NewV4().String(),
+		Id:        user.Id,
+		Name:      user.Name,
+		Nickname:  user.Nickname,
+		Password:  user.Password,
+		Provider:  user.Provider,
+		Sex:       user.Sex,
+		Birth:     user.Birth,
+		Phone:     user.Phone,
+		CreatedAt: time.Now(),
 	}
 
 	err := d.Create(data).Error
