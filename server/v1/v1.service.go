@@ -126,6 +126,7 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	// Find user by user ID
 	_, err = method.GetUserWithId(DB, data.Id)
 	if err != nil {
+		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -136,7 +137,12 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 		data.Provider = "default"
 	}
 
-	method.CreateUser(DB, *data)
+	err = method.CreateUser(DB, *data)
+	if err != nil {
+		utils.HandleErr(err)
+		utils.ForbiddenException(rw)
+		return
+	}
 	rw.WriteHeader(201)
 }
 
@@ -186,4 +192,5 @@ func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
 		utils.ForbiddenException(rw)
 		return
 	}
+	rw.WriteHeader(201)
 }

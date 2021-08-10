@@ -11,8 +11,6 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/klauspost/compress v1.13.1 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
-	github.com/savsgio/atreugo/v11 v11.8.0
-	github.com/savsgio/go-logger v1.0.0
 	github.com/savsgio/go-logger/v2 v2.1.2
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 )

@@ -9,21 +9,21 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type UserObj struct {
-	Uid    string
-	Date   time.Time
-	Signup utils.SignupReq
-}
-
 func CreateUser(d *gorm.DB, user utils.SignupReq) error {
-
-	userObj := UserObj{
-		Uid:    uuid.NewV4().String(),
-		Date:   time.Now(),
-		Signup: user,
+	data := model.User{
+		Uid:      uuid.NewV4().String(),
+		Id:       user.Id,
+		Name:     user.Name,
+		Nickname: user.Nickname,
+		Password: user.Password,
+		Provider: user.Provider,
+		Sex:      user.Sex,
+		Birth:    user.Birth,
+		Phone:    user.Phone,
+		Date:     time.Now(),
 	}
 
-	err := d.Create(userObj).Error
+	err := d.Create(data).Error
 	return err
 }
 
