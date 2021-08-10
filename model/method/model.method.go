@@ -9,53 +9,51 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreateUser(d *gorm.DB, user *utils.SignupReq) {
-	userObj := model.User{
-		Uid:      uuid.NewV4().String(),
-		Id:       user.Id,
-		Name:     user.Name,
-		Nickname: user.Nickname,
-		Password: user.Password,
-		Provider: user.Provider,
-		Sex:      user.Sex,
-		Birth:    user.Birth,
-		Phone:    user.Phone,
-		Date:     time.Now(),
+type UserObj struct {
+	Uid    string
+	Date   time.Time
+	Signup utils.SignupReq
+}
+
+func CreateUser(d *gorm.DB, user utils.SignupReq) error {
+
+	userObj := UserObj{
+		Uid:    uuid.NewV4().String(),
+		Date:   time.Now(),
+		Signup: user,
 	}
-	d.Create(userObj)
+
+	err := d.Create(userObj).Error
+	return err
 }
 
-func GetUserWithId(d *gorm.DB, UserId string) model.User {
-	user := model.User{}
-	d.Where("id = ?", UserId).Find(&user)
-	return user
+func GetUserWithId(d *gorm.DB, UserId string) (model.User, error) {
+	var user model.User
+	err := d.First(&user, "id = ?", UserId).Error
+	return user, err
 }
 
-func DeleteUserWithId(d *gorm.DB, UserId string) {
-	d.Delete(model.User{}, "id = ?", UserId)
-}
-
-func UpdateUser(d *gorm.DB, UserObj model.User) {
-	type Result struct {
-		Password string
+func DeleteUserWithId(d *gorm.DB, UserId string) error {
+	user, err := GetUserWithId(d, UserId)
+	if err != nil {
+		utils.HandleErr(err)
+		return err
 	}
-	var result Result
-	d.Table("users").Select("password").Where("uid = ?", UserObj.Uid).Scan(&result)
+	err = d.Delete(&user).Error
+	return err
+}
 
-	if result.Password != utils.Hash(UserObj.Password) {
+func UpdateUser(d *gorm.DB, UserObj model.User) error {
+	user, err := GetUserWithId(d, UserObj.Id)
+	if err != nil {
+		utils.HandleErr(err)
+		return err
+	}
+
+	if user.Password != UserObj.Password {
 		UserObj.Password = utils.Hash(UserObj.Password)
 	}
 
-	user := model.User{}
-	d.Model(&user).Updates(model.User{
-		Uid:      UserObj.Uid,
-		Provider: UserObj.Provider,
-		Id:       UserObj.Id,
-		Name:     UserObj.Name,
-		Password: UserObj.Password,
-		Nickname: UserObj.Nickname,
-		Sex:      UserObj.Sex,
-		Birth:    UserObj.Birth,
-		Date:     UserObj.Date,
-	})
+	err = d.Model(&user).Update(UserObj).Error
+	return err
 }

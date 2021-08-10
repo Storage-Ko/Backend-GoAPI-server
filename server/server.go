@@ -35,7 +35,6 @@ func Start(aPort int) {
 
 	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
 	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
-	router.HandleFunc("/update", v1.UpdateUserHandle).Methods("PUT")
 
 	// v1 SubRouter generate
 	v1Router := router.PathPrefix("/v1").Subrouter()
@@ -44,6 +43,7 @@ func Start(aPort int) {
 	// v1 Routes define
 	v1Router.HandleFunc("/document", v1.Documentation).Methods("GET")
 	v1Router.HandleFunc("/dropout/{id}", v1.DropoutHandle).Methods("GET")
+	v1Router.HandleFunc("/update", v1.UpdateUserHandle).Methods("PUT")
 
 	// Server Listen
 	logger.Infof("Listening on http://localhost%s\n", port)

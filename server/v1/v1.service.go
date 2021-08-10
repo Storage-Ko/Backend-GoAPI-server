@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/Backend-GoAPI-server/db"
 	"github.com/Backend-GoAPI-server/model"
@@ -58,11 +57,11 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	utils.HandleErr(err)
 
 	data := utils.LoginReq{}
-	json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, &data)
 
 	// Body data validation
-	if data.Id == "" || data.Password == "" {
-		logger.Error(errors.New("Bad Request : " + data.Id))
+	if err != nil {
+		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -73,10 +72,10 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	utils.HandlePanic(err)
 
 	// Find user by id from request body data
-	user := method.GetUserWithId(DB, data.Id)
+	user, err := method.GetUserWithId(DB, data.Id)
 
-	if user.Id == "" {
-		logger.Error(errors.New("Not found account, id : " + data.Id))
+	if err != nil {
+		utils.HandleErr(err)
 		utils.NotFoundException(rw)
 		return
 	}
@@ -107,7 +106,6 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 
 // Signup API
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
-	logger.Info(time.Now())
 	// Get data from request body
 	data := new(utils.SignupReq)
 
@@ -126,8 +124,8 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	utils.HandlePanic(err)
 
 	// Find user by user ID
-	user := method.GetUserWithId(DB, data.Id)
-	if user.Id == data.Id {
+	_, err = method.GetUserWithId(DB, data.Id)
+	if err != nil {
 		utils.BadRequestException(rw)
 		return
 	}
@@ -138,7 +136,7 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 		data.Provider = "default"
 	}
 
-	method.CreateUser(DB, data)
+	method.CreateUser(DB, *data)
 	rw.WriteHeader(201)
 }
 
@@ -153,14 +151,14 @@ func DropoutHandle(rw http.ResponseWriter, r *http.Request) {
 	val := mux.Vars(r)
 
 	// Find user by id from request body data
-	user := method.GetUserWithId(DB, val["id"])
-	if user.Id != "" {
-		method.DeleteUserWithId(DB, user.Id)
-		rw.WriteHeader(200)
+	user, err := method.GetUserWithId(DB, val["id"])
+	if err != nil {
+		utils.NotFoundException(rw)
 		return
 	}
 
-	utils.NotFoundException(rw)
+	method.DeleteUserWithId(DB, user.Id)
+	rw.WriteHeader(200)
 }
 
 // Update User API
@@ -182,6 +180,10 @@ func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
 	defer DB.Close()
 	utils.HandlePanic(err)
 
-	method.UpdateUser(DB, *data)
-
+	err = method.UpdateUser(DB, *data)
+	if err != nil {
+		utils.HandleErr(err)
+		utils.ForbiddenException(rw)
+		return
+	}
 }
