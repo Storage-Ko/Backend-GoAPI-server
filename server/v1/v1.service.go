@@ -3,7 +3,6 @@ package v1
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/Backend-GoAPI-server/db"
@@ -41,27 +40,23 @@ func Documentation(rw http.ResponseWriter, r *http.Request) {
 			Method:      "POST",
 			Description: "signup API",
 		},
+		{
+			URL:         url("/updata"),
+			Method:      "PUT",
+			Description: "update user API",
+		},
 	}
 	json.NewEncoder(rw).Encode(data)
-	/*
-		b, err := json.Marshal(data)
-		utils.HandleErr(err)
-		fmt.Fprintf(rw, "%s", b)
-	*/
 }
 
 // Login API
 func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	// Get data from request body
-	body, err := ioutil.ReadAll(r.Body)
-	utils.HandleErr(err)
-
-	data := utils.LoginReq{}
-	err = json.Unmarshal(body, &data)
+	var data utils.LoginReq
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	// Body data validation
 	if err != nil {
-		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -75,7 +70,6 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	user, err := method.GetUserWithId(DB, data.Id)
 
 	if err != nil {
-		utils.HandleErr(err)
 		utils.NotFoundException(rw)
 		return
 	}
@@ -107,13 +101,12 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 // Signup API
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	// Get data from request body
-	data := new(utils.SignupReq)
+	var data utils.SignupReq
 
 	// Body data validation
-	err := json.NewDecoder(r.Body).Decode(data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -126,7 +119,6 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	// Find user by user ID
 	_, err = method.GetUserWithId(DB, data.Id)
 	if err != nil {
-		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -137,9 +129,8 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 		data.Provider = "default"
 	}
 
-	err = method.CreateUser(DB, *data)
+	err = method.CreateUser(DB, data)
 	if err != nil {
-		utils.HandleErr(err)
 		utils.ForbiddenException(rw)
 		return
 	}
@@ -163,20 +154,24 @@ func DropoutHandle(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	method.DeleteUserWithId(DB, user.Id)
+	err = method.DeleteUserWithId(DB, user.Id)
+	if err != nil {
+		utils.ForbiddenException(rw)
+		return
+	}
+
 	rw.WriteHeader(200)
 }
 
 // Update User API
 func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
 	// Get data from request body
-	data := new(model.User)
+	var data model.User
 
 	// Body data validation
-	err := json.NewDecoder(r.Body).Decode(data)
+	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
-		utils.HandleErr(err)
 		utils.BadRequestException(rw)
 		return
 	}
@@ -186,9 +181,8 @@ func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
 	defer DB.Close()
 	utils.HandlePanic(err)
 
-	err = method.UpdateUser(DB, *data)
+	err = method.UpdateUser(DB, data)
 	if err != nil {
-		utils.HandleErr(err)
 		utils.ForbiddenException(rw)
 		return
 	}
