@@ -7,7 +7,6 @@ import (
 	"github.com/Backend-GoAPI-server/utils"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"github.com/savsgio/go-logger/v2"
 )
 
 func CreateUser(d *gorm.DB, user *utils.SignupReq) {
@@ -41,11 +40,10 @@ func UpdateUser(d *gorm.DB, UserObj model.User) {
 		Password string
 	}
 	var result Result
-	logger.Info(UserObj.Password)
 	d.Table("users").Select("password").Where("uid = ?", UserObj.Uid).Scan(&result)
-	if result.Password != UserObj.Password {
-		UserObj.Password = utils.Hash(result.Password)
-		logger.Info(UserObj.Password)
+
+	if result.Password != utils.Hash(UserObj.Password) {
+		UserObj.Password = utils.Hash(UserObj.Password)
 	}
 
 	user := model.User{}

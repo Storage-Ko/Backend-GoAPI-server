@@ -86,9 +86,6 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 
 	// Password validataion
 	if user.Password != hashedPw {
-		logger.Info(user.Password)
-		logger.Info(data.Password)
-		logger.Info(hashedPw)
 		logger.Error(errors.New("Wrong PW id : " + data.Id))
 		utils.ForbiddenException(rw)
 		return
