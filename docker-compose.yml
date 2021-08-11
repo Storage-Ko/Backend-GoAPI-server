@@ -5,7 +5,7 @@ services:
         build: .
         image: kokt0203/goapi
     production:
-        image: kokt0203/goapi:${BUILD_NUMBER}
+        image: kokt0203/goapi:lastest
         volumes: 
             - .:/code
         entrypoint: /main
