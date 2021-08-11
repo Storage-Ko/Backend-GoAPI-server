@@ -3,9 +3,9 @@ version: '3'
 services:
     app: 
         build: .
-        image: ${DOCKER_USER_ID}/goapi
+        image: kokt0203/goapi
     production:
-        image: ${DOCKER_USER_ID}/goapi:${BUILD_NUMBER}
+        image: kokt0203/goapi:${BUILD_NUMBER}
         volumes: 
             - .:/code
         entrypoint: /main
