@@ -1,4 +1,4 @@
-package utils
+package model
 
 type ErrorRes struct {
 	Status  int    `json:"statusCode"`

@@ -51,7 +51,7 @@ func Documentation(rw http.ResponseWriter, r *http.Request) {
 // Login API
 func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	// Get data from request body
-	var data utils.LoginReq
+	var data model.LoginReq
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	// Body data validation
@@ -83,7 +83,7 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 	refresh := utils.RefreshToken(data.Id) // 14 Days
 
 	// Response Token
-	res := utils.LoginRes{
+	res := model.LoginRes{
 		Status:       200,
 		Accesstoken:  access,
 		Refreshtoken: refresh,
@@ -95,7 +95,7 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 // Signup API
 func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 	// Get data from request body
-	var data utils.SignupReq
+	var data model.SignupReq
 
 	// Body data validation
 	err := json.NewDecoder(r.Body).Decode(&data)

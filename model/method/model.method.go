@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreateUser(user utils.SignupReq) error {
+func CreateUser(user model.SignupReq) error {
 	d := db.GetDB()
 	data := model.User{
 		Uid:       uuid.NewV4().String(),
