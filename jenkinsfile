@@ -15,7 +15,7 @@ node {
                 
             } 
             stage('Tag') { 
-                sh(script: '''docker tag kokt0203/goapi kokt0203/goapi:1.0.0''') 
+            
             } 
             stage('Push') { 
                 sh(script: 'docker login -u kokt0203 -p redpanda2004') 
