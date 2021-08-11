@@ -8,7 +8,6 @@ import (
 	"github.com/Backend-GoAPI-server/db"
 	"github.com/Backend-GoAPI-server/server/middleware"
 	v1 "github.com/Backend-GoAPI-server/server/v1"
-	"github.com/Backend-GoAPI-server/utils"
 	"github.com/gorilla/mux"
 	"github.com/savsgio/go-logger/v2"
 )
@@ -20,14 +19,12 @@ func Start(aPort int) {
 	port = fmt.Sprintf(":%d", aPort)
 
 	// DB setting
-	DB, err := db.Start()
+	db.Start()
+	defer db.CloseDB()
 	logger.Info("Database is connected")
-	utils.HandlePanic(err)
 
-	db.Migrate(DB)
+	db.Migrate()
 	logger.Info("Migrating tables")
-	DB.Close()
-	logger.Info("Database is disconnected")
 
 	// Main Router generate
 	router := mux.NewRouter()

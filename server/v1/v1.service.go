@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Backend-GoAPI-server/db"
 	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/model/method"
 	"github.com/Backend-GoAPI-server/utils"
@@ -61,13 +60,8 @@ func LoginHandle(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get gorm.DB
-	DB, err := db.Start()
-	defer DB.Close()
-	utils.HandlePanic(err)
-
 	// Find user by id from request body data
-	user, err := method.GetUserWithId(DB, data.Id)
+	user, err := method.GetUserWithId(data.Id)
 
 	if err != nil {
 		utils.NotFoundException(rw)
@@ -111,13 +105,8 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get gorm.DB
-	DB, err := db.Start()
-	defer DB.Close()
-	utils.HandlePanic(err)
-
 	// Find user by user ID
-	_, err = method.GetUserWithId(DB, data.Id)
+	_, err = method.GetUserWithId(data.Id)
 	if err == nil {
 		utils.BadRequestException(rw)
 		return
@@ -129,7 +118,7 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 		data.Provider = "default"
 	}
 
-	err = method.CreateUser(DB, data)
+	err = method.CreateUser(data)
 	if err != nil {
 		utils.ForbiddenException(rw)
 		return
@@ -139,22 +128,16 @@ func SignupHandle(rw http.ResponseWriter, r *http.Request) {
 
 // Drop out API
 func DropoutHandle(rw http.ResponseWriter, r *http.Request) {
-
-	// Get gorm.DB
-	DB, err := db.Start()
-	defer DB.Close()
-	utils.HandlePanic(err)
-
 	val := mux.Vars(r)
 
 	// Find user by id from request body data
-	user, err := method.GetUserWithId(DB, val["id"])
+	user, err := method.GetUserWithId(val["id"])
 	if err != nil {
 		utils.NotFoundException(rw)
 		return
 	}
 
-	err = method.DeleteUserWithId(DB, user.Id)
+	err = method.DeleteUserWithId(user.Id)
 	if err != nil {
 		utils.ForbiddenException(rw)
 		return
@@ -176,12 +159,7 @@ func UpdateUserHandle(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get gorm.DB
-	DB, err := db.Start()
-	defer DB.Close()
-	utils.HandlePanic(err)
-
-	err = method.UpdateUser(DB, data)
+	err = method.UpdateUser(data)
 	if err != nil {
 		utils.ForbiddenException(rw)
 		return

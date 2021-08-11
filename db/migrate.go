@@ -2,10 +2,10 @@ package db
 
 import (
 	"github.com/Backend-GoAPI-server/model"
-	"github.com/jinzhu/gorm"
 )
 
-func Migrate(db *gorm.DB) {
+func Migrate() {
+	db := GetDB()
 	db.LogMode(false)
 
 	// Create table when table is not exist

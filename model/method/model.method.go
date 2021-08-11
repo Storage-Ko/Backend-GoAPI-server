@@ -3,13 +3,14 @@ package method
 import (
 	"time"
 
+	"github.com/Backend-GoAPI-server/db"
 	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/utils"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreateUser(d *gorm.DB, user utils.SignupReq) error {
+func CreateUser(user utils.SignupReq) error {
+	d := db.GetDB()
 	data := model.User{
 		Uid:       uuid.NewV4().String(),
 		Id:        user.Id,
@@ -27,14 +28,16 @@ func CreateUser(d *gorm.DB, user utils.SignupReq) error {
 	return err
 }
 
-func GetUserWithId(d *gorm.DB, UserId string) (model.User, error) {
+func GetUserWithId(UserId string) (model.User, error) {
 	var user model.User
+	d := db.GetDB()
 	err := d.First(&user, "id = ?", UserId).Error
 	return user, err
 }
 
-func DeleteUserWithId(d *gorm.DB, UserId string) error {
-	user, err := GetUserWithId(d, UserId)
+func DeleteUserWithId(UserId string) error {
+	d := db.GetDB()
+	user, err := GetUserWithId(UserId)
 	if err != nil {
 		utils.HandleErr(err)
 		return err
@@ -43,8 +46,9 @@ func DeleteUserWithId(d *gorm.DB, UserId string) error {
 	return err
 }
 
-func UpdateUser(d *gorm.DB, UserObj model.User) error {
-	user, err := GetUserWithId(d, UserObj.Id)
+func UpdateUser(UserObj model.User) error {
+	d := db.GetDB()
+	user, err := GetUserWithId(UserObj.Id)
 	if err != nil {
 		utils.HandleErr(err)
 		return err

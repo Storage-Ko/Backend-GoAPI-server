@@ -10,7 +10,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Start() (*gorm.DB, error) {
+var db *gorm.DB
+var err error
+
+func Start() {
 	var dbConfig map[string]string
 	dbConfig, err := godotenv.Read()
 	utils.HandleErr(err)
@@ -25,6 +28,14 @@ func Start() (*gorm.DB, error) {
 		dbConfig["MYSQL_DBNAME"],
 	)
 
-	db, err := gorm.Open("mysql", mysqlCredentials)
-	return db, err
+	db, err = gorm.Open("mysql", mysqlCredentials)
+	utils.HandlePanic(err)
+}
+
+func GetDB() *gorm.DB {
+	return db
+}
+
+func CloseDB() {
+	db.Close()
 }
