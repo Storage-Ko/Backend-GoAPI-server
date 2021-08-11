@@ -13,10 +13,9 @@ node {
             } 
             stage('Build') { 
                 sh(script: 'go build -o main .')  
-                sh(script: 'docker-compose up -d production')    
             } 
             stage('Deploy') { 
-               
+                sh(script: 'docker-compose up -d production')    
             } 
         } 
     
