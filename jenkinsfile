@@ -9,17 +9,11 @@ node {
                 git 'https://github.com/Ko-GyeongTae/Backend-GoAPI-server.git' 
             } 
             stage('Unit Test') { 
-                
-            } 
-            stage('Build') { 
-                
-            } 
-            stage('Tag') { 
             
             } 
-            stage('Push') { 
-                sh(script: 'docker login -u kokt0203 -p redpanda2004') 
-                
+            stage('Build') { 
+                sh(script: 'go build -o main .')  
+                sh(script: 'docker-compose up -d production')    
             } 
             stage('Deploy') { 
                
