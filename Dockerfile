@@ -18,4 +18,6 @@ RUN cp /build/.env .
 FROM scratch
 COPY --from=builder /dist/main .
 COPY --from=builder /dist/.env .
+
+EXPOSE 4040
 ENTRYPOINT ["/main"]

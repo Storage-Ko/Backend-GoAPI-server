@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+    app: 
+        build: .
+        image: ${DOCKER_USER_ID}/goapi
+    production:
+        image: ${DOCKER_USER_ID}/goapi:${BUILD_NUMBER}
+        volumes: 
+            - .:/code
+        entrypoint: /main
+        ports: 
+            - "4030:4040"
