@@ -3,7 +3,10 @@ package v1
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/model/method"
@@ -19,6 +22,31 @@ type urlDescription struct {
 	Method      string `json:"method"`
 	Description string `json:"description"`
 	Payload     string `json:"payload,omitempty"`
+}
+
+func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
+	uploadFile, header, err := r.FormFile("file")
+
+	utils.HandleErr(err)
+	if err != nil {
+		utils.BadRequestException(rw)
+		return
+	}
+
+	dirname := "./public"
+	os.MkdirAll(dirname, 0777)
+	filepath := fmt.Sprintf("%s/%s", dirname, header.Filename)
+	file, err := os.Create(filepath)
+	defer file.Close()
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(rw, err)
+		return
+	}
+
+	io.Copy(file, uploadFile)
+	rw.WriteHeader(201)
+	fmt.Fprintf(rw, filepath)
 }
 
 // Document API

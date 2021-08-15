@@ -30,8 +30,10 @@ func Start(aPort int) {
 	router := mux.NewRouter()
 	router.Use(middleware.JSONResponseContentType)
 
+	router.Handle("/file", http.FileServer(http.Dir("public")))
 	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
 	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
+	router.HandleFunc("/upload", v1.UploadsHandler).Methods("POST")
 
 	// v1 SubRouter generate
 	v1Router := router.PathPrefix("/v1").Subrouter()
