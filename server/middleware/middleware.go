@@ -12,6 +12,9 @@ func JSONResponseContentType(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		// Response content type setting
 		rw.Header().Add("Content-Type", "application/json")
+
+		// Set CORS headers
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		next.ServeHTTP(rw, r)
 	})
 }
