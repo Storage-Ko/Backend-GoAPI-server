@@ -30,7 +30,7 @@ func Start(aPort int) {
 	router := mux.NewRouter()
 	router.Use(middleware.JSONResponseContentType)
 
-	router.Handle("/file", http.FileServer(http.Dir("public")))
+	router.HandleFunc("/file/{path}", v1.LoadsFile).Methods("GET")
 	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
 	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
 	router.HandleFunc("/upload", v1.UploadsHandler).Methods("POST")

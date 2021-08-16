@@ -49,6 +49,12 @@ func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(rw, filepath)
 }
 
+func LoadsFile(rw http.ResponseWriter, r *http.Request) {
+	path := mux.Vars(r)
+	fmt.Println(path)
+	return
+}
+
 // Document API
 func Documentation(rw http.ResponseWriter, r *http.Request) {
 	data := []urlDescription{
