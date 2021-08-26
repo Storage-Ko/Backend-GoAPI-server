@@ -25,6 +25,7 @@ type urlDescription struct {
 }
 
 func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Header)
 	uploadFile, header, err := r.FormFile("file")
 
 	utils.HandleErr(err)
@@ -51,7 +52,7 @@ func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
 
 func LoadsFile(rw http.ResponseWriter, r *http.Request) {
 	path := mux.Vars(r)
-	fmt.Println(path)
+	http.ServeFile(rw, r, "./public/"+path["path"])
 	return
 }
 

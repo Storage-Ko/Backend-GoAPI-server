@@ -28,8 +28,10 @@ func Start(aPort int) {
 
 	// Main Router generate
 	router := mux.NewRouter()
+	router.Use(mux.CORSMethodMiddleware(router))
 	router.Use(middleware.JSONResponseContentType)
 
+	router.HandleFunc("/file", v1.UploadsHandler).Methods("POST")
 	router.HandleFunc("/file/{path}", v1.LoadsFile).Methods("GET")
 	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
 	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
