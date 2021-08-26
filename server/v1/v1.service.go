@@ -24,30 +24,39 @@ type urlDescription struct {
 	Payload     string `json:"payload,omitempty"`
 }
 
-func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Header)
-	uploadFile, header, err := r.FormFile("file")
+type fileType struct {
+	Filename string `json:"filename"`
+}
 
+func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
+	// Read file from Request
+	uploadFile, header, err := r.FormFile("file")
 	utils.HandleErr(err)
 	if err != nil {
 		utils.BadRequestException(rw)
 		return
 	}
 
+	// Generate Dir for save file
 	dirname := "./public"
 	os.MkdirAll(dirname, 0777)
+
+	// Save file
 	filepath := fmt.Sprintf("%s/%s", dirname, header.Filename)
 	file, err := os.Create(filepath)
 	defer file.Close()
+
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(rw, err)
 		return
 	}
-
 	io.Copy(file, uploadFile)
-	rw.WriteHeader(201)
-	fmt.Fprintf(rw, header.Filename)
+
+	data := fileType{
+		Filename: header.Filename,
+	}
+	utils.MarshalAndRW(201, data, rw)
 }
 
 func LoadsFile(rw http.ResponseWriter, r *http.Request) {
