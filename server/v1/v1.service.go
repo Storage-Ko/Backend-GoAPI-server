@@ -47,7 +47,7 @@ func UploadsHandler(rw http.ResponseWriter, r *http.Request) {
 
 	io.Copy(file, uploadFile)
 	rw.WriteHeader(201)
-	fmt.Fprintf(rw, filepath)
+	fmt.Fprintf(rw, header.Filename)
 }
 
 func LoadsFile(rw http.ResponseWriter, r *http.Request) {
