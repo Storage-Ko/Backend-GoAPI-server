@@ -6,7 +6,9 @@ import (
 	"net/http"
 
 	"github.com/Backend-GoAPI-server/db"
+	"github.com/Backend-GoAPI-server/server/file"
 	"github.com/Backend-GoAPI-server/server/middleware"
+	"github.com/Backend-GoAPI-server/server/user"
 	v1 "github.com/Backend-GoAPI-server/server/v1"
 	"github.com/gorilla/mux"
 	"github.com/savsgio/go-logger/v2"
@@ -31,11 +33,10 @@ func Start(aPort int) {
 	router.Use(mux.CORSMethodMiddleware(router))
 	router.Use(middleware.JSONResponseContentType)
 
-	router.HandleFunc("/file", v1.UploadsHandler).Methods("POST")
-	router.HandleFunc("/file/{path}", v1.LoadsFile).Methods("GET")
-	router.HandleFunc("/login", v1.LoginHandle).Methods("POST")
-	router.HandleFunc("/signup", v1.SignupHandle).Methods("POST")
-	router.HandleFunc("/upload", v1.UploadsHandler).Methods("POST")
+	router.HandleFunc("/file", file.UploadsHandler).Methods("POST")
+	router.HandleFunc("/file/{path}", file.LoadsFile).Methods("GET")
+	router.HandleFunc("/login", user.LoginHandle).Methods("POST")
+	router.HandleFunc("/signup", user.SignupHandle).Methods("POST")
 
 	// v1 SubRouter generate
 	v1Router := router.PathPrefix("/v1").Subrouter()
@@ -43,8 +44,8 @@ func Start(aPort int) {
 
 	// v1 Routes define
 	v1Router.HandleFunc("/document", v1.Documentation).Methods("GET")
-	v1Router.HandleFunc("/dropout/{id}", v1.DropoutHandle).Methods("GET")
-	v1Router.HandleFunc("/update", v1.UpdateUserHandle).Methods("PUT")
+	v1Router.HandleFunc("/dropout/{id}", user.DropoutHandle).Methods("GET")
+	v1Router.HandleFunc("/update", user.UpdateUserHandle).Methods("PUT")
 
 	// Server Listen
 	logger.Infof("Listening on http://localhost%s\n", port)

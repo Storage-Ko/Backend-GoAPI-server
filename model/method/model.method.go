@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/Backend-GoAPI-server/db"
+	"github.com/Backend-GoAPI-server/dto"
 	"github.com/Backend-GoAPI-server/model"
 	"github.com/Backend-GoAPI-server/utils"
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreateUser(user model.SignupReq) error {
+func CreateUser(user dto.SignupReq) error {
 	d := db.GetDB()
 	data := model.User{
 		Uid:       uuid.NewV4().String(),
